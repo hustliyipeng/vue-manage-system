@@ -8,16 +8,18 @@
         </div>
         <div class="container">
             <div class="plugins-tips">
-                Vue.Draggable：基于 Sortable.js 的 Vue 拖拽组件。
-                访问地址：<a href="https://github.com/SortableJS/Vue.Draggable" target="_blank">Vue.Draggable</a>
+                我的待办事项
             </div>
             <div class="drag-box">
                 <div class="drag-box-item">
                     <div class="item-title">todo</div>
                     <draggable v-model="todo" @remove="removeHandle" :options="dragOptions">
                         <transition-group tag="div" id="todo" class="item-ul">
-                            <div v-for="item in todo" class="drag-list" :key="item.id">
+                            <div v-for="(item,index) in todo" class="drag-list" :key="index" style="background: cadetblue;">
                                 {{item.content}}
+                            </div>
+                            <div class="drag-list" key="add">
+                                <el-input v-model="add_input" placeholder="新增待办事项..." @blur="add_todo"></el-input>
                             </div>
                         </transition-group>
                     </draggable>
@@ -26,7 +28,7 @@
                     <div class="item-title">doing</div>
                     <draggable v-model="doing" @remove="removeHandle" :options="dragOptions">
                         <transition-group tag="div" id="doing" class="item-ul">
-                            <div v-for="item in doing" class="drag-list" :key="item.id">
+                            <div v-for="(item,index) in doing" class="drag-list" :key="index" style="background: cornflowerblue;">
                                 {{item.content}}
                             </div>
                         </transition-group>
@@ -36,7 +38,7 @@
                     <div class="item-title">done</div>
                     <draggable v-model="done" @remove="removeHandle" :options="dragOptions">
                         <transition-group tag="div" id="done" class="item-ul">
-                            <div v-for="item in done" class="drag-list" :key="item.id">
+                            <div v-for="(item,index) in done" class="drag-list" :key="index" style="background: lightgray;">
                                 {{item.content}}
                             </div>
                         </transition-group>
@@ -59,57 +61,43 @@
                     group: 'sortlist',
                     ghostClass: 'ghost-style'
                 },
-                todo: [
-                    {
-                        id: 1,
-                        content: '开发图表组件'
-                    },
-                    {
-                        id: 2,
-                        content: '开发拖拽组件'
-                    },
-                    {
-                        id: 3,
-                        content: '开发权限测试组件'
-                    }
-                ],
-                doing: [
-                    {
-                        id: 1,
-                        content: '开发登录注册页面'
-                    },
-                    {
-                        id: 2,
-                        content: '开发头部组件'
-                    },
-                    {
-                        id: 3,
-                        content: '开发表格相关组件'
-                    },
-                    {
-                        id: 4,
-                        content: '开发表单相关组件'
-                    }
-                ],
-                done:[
-                    {
-                        id: 1,
-                        content: '初始化项目，生成工程目录，完成相关配置'
-                    },
-                    {
-                        id: 2,
-                        content: '开发项目整体框架'
-                    }
-                ]
+                todo: [],
+                doing: [],
+                done:[],
+                add_input:null
             }
         },
         components:{
             draggable
         },
+        created(){
+            this.get_init_data()
+        },
+        
         methods: {
+            get_init_data(){
+                let data=JSON.parse(localStorage.getItem("todo_data"));
+                console.log('data',data)
+                this.todo=data.todo
+                this.doing=data.doing
+                this.done=data.done
+            },
+            set_todo_data(){
+                let data={todo:this.todo,doing:this.doing,done:this.done}
+                localStorage.setItem("todo_data",JSON.stringify(data));
+            },
             removeHandle(event){
                 console.log(event);
                 this.$message.success(`从 ${event.from.id} 移动到 ${event.to.id} `);
+                this.set_todo_data()
+            },
+            add_todo(){
+                if(this.add_input){
+                    console.log("add")
+                    this.todo.push({content:this.add_input})
+                    this.add_input=null
+                    this.set_todo_data()
+                }
             }
         }
     }
@@ -123,7 +111,7 @@
     }
     .drag-box-item {
         flex: 1;
-        max-width: 330px;
+        max-width: 420px;
         min-width: 300px;
         background-color: #eff1f5;
         margin-right: 16px;
@@ -136,10 +124,16 @@
         line-height: 1.5;
         color: #24292e;
         font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .el-icon-lx-roundadd{
+        padding: 0 30px;
     }
     .item-ul{
         padding: 0 8px 8px;
-        height: 500px;
+        height: 560px;
         overflow-y: scroll;
     }
     .item-ul::-webkit-scrollbar{
@@ -170,5 +164,10 @@
         display: block;
         color: transparent;
         border-style: dashed
+    }
+    .plugins-tips{
+        text-align: center;
+        font-size: 25px;
+        font-weight: 600;
     }
 </style>

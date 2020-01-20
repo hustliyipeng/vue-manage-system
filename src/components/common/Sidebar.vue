@@ -117,7 +117,7 @@ export default {
                     subs: [
                         {
                             index: 'drag',
-                            title: '拖拽列表'
+                            title: '待办事项'
                         },
                         {
                             index: 'dialog',

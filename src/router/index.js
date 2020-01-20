@@ -67,7 +67,7 @@ export default new Router({
                     // 拖拽列表组件
                     path: '/drag',
                     component: () => import(/* webpackChunkName: "drag" */ '../components/page/DragList.vue'),
-                    meta: { title: '拖拽列表' }
+                    meta: { title: '待办事项' }
                 },
                 {
                     // 拖拽Dialog组件
